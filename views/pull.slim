@@ -1,0 +1,10 @@
+p you got:
+-@loot.each do |reward|
+    - if reward.is_a?(String)
+        p #{reward}
+    - else
+        p #{reward["name"]} (#{reward["rarity"]})
+
+a href="/pull" open another
+br
+a href="/" back to homepage

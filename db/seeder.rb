@@ -1,6 +1,6 @@
 require 'sqlite3'
 
-db = SQLite3::Database.new("databas.db")
+db = SQLite3::Database.new("db/database.db")
 
 
 def seed!(db)
@@ -15,21 +15,24 @@ def seed!(db)
 end
 
 def drop_tables(db)
-  db.execute('DROP TABLE IF EXISTS exempel')
+  db.execute('DROP TABLE IF EXISTS pool')
 end
 
 def create_tables(db)
-  db.execute('CREATE TABLE exempel (
+  db.execute('CREATE TABLE pool (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name TEXT NOT NULL, 
-              description TEXT,
-              state BOOLEAN)')
+              name TEXT UNIQUE NOT NULL,
+              rarity TEXT CHECK (rarity IN ("common", "uncommon", "rare", "epic", "legendary", "mythical"))
+              )')
 end
 
 def populate_tables(db)
-  db.execute('INSERT INTO exempel (name, description, state) VALUES ("Köp mjölk", "3 liter mellanmjölk, eko",false)')
-  db.execute('INSERT INTO exempel (name, description, state) VALUES ("Köp julgran", "En rödgran",false)')
-  db.execute('INSERT INTO exempel (name, description, state) VALUES ("Pynta gran", "Glöm inte lamporna i granen och tomten",false)')
+  db.execute('INSERT INTO pool (name, rarity) VALUES ("Sword of Souls", "common")')
+  db.execute('INSERT INTO pool (name, rarity) VALUES ("Maid Outfit", "uncommon")')
+  db.execute('INSERT INTO pool (name, rarity) VALUES ("Banana", "rare")')
+  db.execute('INSERT INTO pool (name, rarity) VALUES ("Cool Sunglasses", "epic")')
+  db.execute('INSERT INTO pool (name, rarity) VALUES ("AK47", "legendary")')
+  db.execute('INSERT INTO pool (name, rarity) VALUES ("Trump\'s Last Braincell", "mythical")')
 end
 
 
