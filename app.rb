@@ -8,24 +8,30 @@ enable :sessions
 
 require_relative 'login.rb'
 
-def db(hash = true)
-return @db if @db
+helpers do
+  def db(hash = true)
+    return @db if @db
 
-@db = SQLite3::Database.new("db/database.db")
-  if hash
-    @db.results_as_hash = true
-  else
-    @db.results_as_hash = false
+    @db = SQLite3::Database.new "db/database.db"
+      if hash
+        @db.results_as_hash = true
+      else
+        @db.results_as_hash = false
+      end
+    
+      return @db
   end
 
-  return @db
+  def rarities
+    return ["common","uncommon","rare","epic","legendary","mythical"]
+  end
 end
 
-get('/') do
+get '/' do
   slim(:main)
 end
 
-get('/pull') do
+get '/pull' do
   @loot = []
   # if (1.0...0.5) === 0.8994041638438267
   4.times do
@@ -48,10 +54,11 @@ get('/pull') do
     @loot << item
     # @loot << number.to_s
   end
-  slim(:pull)
+  slim :pull
 end
 
-get('/pool') do
-  @pool = db.execute("SELECT * FROM pool ORDER BY rarity")
-  slim(:'pool/index')
+get '/noaccess' do
+  slim :'errors/noaccess'
 end
+
+require_relative 'pool.rb'

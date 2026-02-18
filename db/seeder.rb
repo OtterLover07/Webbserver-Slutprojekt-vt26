@@ -16,6 +16,7 @@ end
 
 def drop_tables(db)
   db.execute('DROP TABLE IF EXISTS pool')
+  db.execute('DROP TABLE IF EXISTS users') 
 end
 
 def create_tables(db)
@@ -24,6 +25,11 @@ def create_tables(db)
               name TEXT UNIQUE NOT NULL,
               rarity TEXT CHECK (rarity IN ("common", "uncommon", "rare", "epic", "legendary", "mythical"))
               )')
+  db.execute('CREATE TABLE IF NOT EXISTS users (
+              user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+              username TINYTEXT UNIQUE NOT NULL,
+              pwd_digest TEXT NOT NULL,
+              admin BOOLEAN DEFAULT 0)')
 end
 
 def populate_tables(db)
@@ -33,6 +39,8 @@ def populate_tables(db)
   db.execute('INSERT INTO pool (name, rarity) VALUES ("Cool Sunglasses", "epic")')
   db.execute('INSERT INTO pool (name, rarity) VALUES ("AK47", "legendary")')
   db.execute('INSERT INTO pool (name, rarity) VALUES ("Trump\'s Last Braincell", "mythical")')
+
+  db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES ("admin", "$2a$12$sU6i5aEftHnuhG.6rE9G9O9BflEdAvhUY7/s56M4oYoRYaQ2OoNWK", 1)')
 end
 
 

@@ -1,0 +1,12 @@
+body {
+  font-family: sans-serif;
+  color: #555;
+  background-color: #f1f1f1;
+  font-size: x-large;
+  margin: 1em;
+}
+form > p {
+  display: inline;
+  font-size: 12px;
+  color: red;
+}

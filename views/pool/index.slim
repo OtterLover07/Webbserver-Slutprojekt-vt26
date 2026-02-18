@@ -1,24 +1,18 @@
-/ - if session[:admin]
+
 form action="/pool/new" method="get"
     input type="submit" value="Add new item"
 hr
 
 - if @pool.length == 0
-    / - if @query != nil
-    /     h2 There are no animals named #{@query} in the database
-    / - else
     h2 There are no items in the loot pool
 - else
     h2 Loot Pool:
 
     - @pool.each do |item|
-        / - if session[:admin]
         h2 
             a href="/pool/#{item["id"]}/edit" style="color:black" #{item["name"]}
-        / - else
-            h2 #{item["name"]}
         p rarity: #{item["rarity"]}
-        / - if session[:admin]
-        form action="/pool/#{item["id"]}/delete" method="post"
+        form action="/pool/delete" method="post"
+            input type="hidden" value="#{item["id"]}" name="id"
             input type="submit" value="Delete"
         hr

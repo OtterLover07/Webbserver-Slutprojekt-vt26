@@ -1,0 +1,16 @@
+h2 Add New Item To Pool
+
+form action="/new" method="post"
+    input name="name" placeholder="Item Name" type="text" required=true
+    br
+    label Item Rarity:
+    br
+    div style="margin-left:15px"
+        - rarities.each do |rarity|
+            input type="radio" id="#{rarity}" name="rarity" value="#{rarity}"
+            label for="#{rarity}" #{rarity.capitalize}
+            br
+    input type="submit" value="Add to list"
+    input type="reset" value="Reset"
+form action="/" method="get"
+    input type="submit" value="Cancel"
