@@ -8,21 +8,21 @@ html lang="en"
   body 
     h1 Lootbox Page
     hr
-    - if session[:uid]
-      form action="/logout" method="post"
-        input type="submit" value="Log out"
-    - if session[:admin]
+    - if request.path_info != "/login" && request.path_info != "/register" 
+      - if session[:uid]
+        form action="/logout" method="post"
+          input type="submit" value="Log out"
+      - if session[:admin]
+          form action="/register" method="get"
+            input type="submit" value="Register new user"
+      - else
+        form action="/login" method="get"
+          input type="hidden" name="redirect" value=request.path_info
+          input type="submit" value="Log in"
         form action="/register" method="get"
-          input type="submit" value="Register new user"
+            input type="submit" value="Sign up" 
     - else
-      form action="/login" method="post"
-        input name="username" type="text" placeholder="Enter Username"
-        input name="pwd" type="password" placeholder="Enter Password"
-        br
-        input type="submit" value="Log in"
-        - if flash[:login_fail]
-          p style="color:red"   #{flash[:login_fail]}
-      form action="/register" method="get"
-          input type="submit" value="Sign up"
+      form action="/" method="get"
+        input type="submit" value="Return to homepage" 
     hr
 ==yield

@@ -4,6 +4,7 @@ Things to do:
         - Items should have different rarities
     - Manage items in loot pool
         - admin-only access
+        - CRUD functionality
     - Store pulled items
     - Store item inventory per-user
         - Requires login functionality

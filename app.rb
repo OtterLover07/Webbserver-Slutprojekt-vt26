@@ -6,7 +6,7 @@ require 'sinatra/flash'
 
 enable :sessions
 
-require_relative 'login.rb'
+# require_relative 'model.rb'
 
 helpers do
   def db(hash = true)
@@ -50,15 +50,19 @@ get '/pull' do
       rarity = "common"
     end
    
-    item = db.execute("SELECT * FROM pool WHERE rarity LIKE ? LIMIT 1", rarity).first
+    item = db.execute("SELECT * FROM pool WHERE rarity LIKE ? ORDER BY RANDOM() LIMIT 1", rarity).first
+    if user_id = session[:uid] 
+      db.execute "INSERT OR IGNORE INTO pulled_items VALUES (?, 0, ?)", [item["id"],user_id]
+      db.execute("UPDATE pulled_items SET amount = (amount + 1) WHERE (item_id,owner_id) LIKE (?,?)", [item["id"],user_id])
+    end
     @loot << item
     # @loot << number.to_s
   end
   slim :pull
 end
 
-get '/noaccess' do
-  slim :'errors/noaccess'
-end
 
-require_relative 'pool.rb'
+Dir["C:/Users/melker.willforss/Documents/Webbserverprogrammering/Webbserver-Slutprojekt-vt26/routes/*.rb"].each {|file| require file }
+# require_relative 'errors.rb'
+# require_relative 'login.rb'
+# require_relative 'pool.rb'

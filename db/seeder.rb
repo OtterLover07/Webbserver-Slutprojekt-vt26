@@ -20,7 +20,7 @@ def drop_tables(db)
 end
 
 def create_tables(db)
-  db.execute('CREATE TABLE pool (
+  db.execute('CREATE TABLE IF NOT EXISTS pool (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT UNIQUE NOT NULL,
               rarity TEXT CHECK (rarity IN ("common", "uncommon", "rare", "epic", "legendary", "mythical"))
@@ -30,17 +30,23 @@ def create_tables(db)
               username TINYTEXT UNIQUE NOT NULL,
               pwd_digest TEXT NOT NULL,
               admin BOOLEAN DEFAULT 0)')
+  db.execute('CREATE TABLE IF NOT EXISTS pulled_items (
+              item_id INTEGER, 
+              amount INTEGER,
+              owner_id INTEGER,
+              FOREIGN KEY(item_id) REFERENCES pool(id),
+              FOREIGN KEY(owner_id) REFERENCES users(user_id))')
 end
 
 def populate_tables(db)
-  db.execute('INSERT INTO pool (name, rarity) VALUES ("Sword of Souls", "common")')
-  db.execute('INSERT INTO pool (name, rarity) VALUES ("Maid Outfit", "uncommon")')
-  db.execute('INSERT INTO pool (name, rarity) VALUES ("Banana", "rare")')
-  db.execute('INSERT INTO pool (name, rarity) VALUES ("Cool Sunglasses", "epic")')
-  db.execute('INSERT INTO pool (name, rarity) VALUES ("AK47", "legendary")')
-  db.execute('INSERT INTO pool (name, rarity) VALUES ("Trump\'s Last Braincell", "mythical")')
+  db.execute('INSERT OR IGNORE INTO pool (name, rarity) VALUES ("Sword of Souls", "common")')
+  db.execute('INSERT OR IGNORE INTO pool (name, rarity) VALUES ("Maid Outfit", "uncommon")')
+  db.execute('INSERT OR IGNORE INTO pool (name, rarity) VALUES ("Banana", "rare")')
+  db.execute('INSERT OR IGNORE INTO pool (name, rarity) VALUES ("Cool Sunglasses", "epic")')
+  db.execute('INSERT OR IGNORE INTO pool (name, rarity) VALUES ("AK47", "legendary")')
+  db.execute('INSERT OR IGNORE INTO pool (name, rarity) VALUES ("Trump\'s Last Braincell", "mythical")')
 
-  db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES ("admin", "$2a$12$sU6i5aEftHnuhG.6rE9G9O9BflEdAvhUY7/s56M4oYoRYaQ2OoNWK", 1)')
+  db.execute('INSERT OR IGNORE INTO users (username, pwd_digest, admin) VALUES ("admin", "$2a$12$sU6i5aEftHnuhG.6rE9G9O9BflEdAvhUY7/s56M4oYoRYaQ2OoNWK", 1)')
 end
 
 

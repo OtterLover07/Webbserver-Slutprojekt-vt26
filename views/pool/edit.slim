@@ -1,0 +1,21 @@
+h2 Edit Item
+
+form action="/pool/edit" method="post"
+    input name="id" type="hidden" value=@item["id"]
+    input name="name" placeholder="Item Name" type="text" required=true value=@item["name"]
+    br
+    label Item Rarity:
+    br
+    div style="margin-left:15px"
+        - rarities.each do |rarity|
+            - if @item["rarity"] == rarity
+                input type="radio" id="#{rarity}" name="rarity" value="#{rarity}" checked="true"
+            - else
+                input type="radio" id="#{rarity}" name="rarity" value="#{rarity}"
+                    
+            label for="#{rarity}" #{rarity.capitalize}
+            br
+    input type="submit" value="Confirm"
+    input type="reset" value="Reset"
+form action="/pool" method="get"
+    input type="submit" value="Cancel"

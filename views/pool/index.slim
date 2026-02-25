@@ -3,6 +3,8 @@ form action="/pool/new" method="get"
     input type="submit" value="Add new item"
 hr
 
+- if message = flash[:pool_message]
+    p #{message}
 - if @pool.length == 0
     h2 There are no items in the loot pool
 - else

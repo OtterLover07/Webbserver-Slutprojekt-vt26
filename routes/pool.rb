@@ -26,19 +26,27 @@ end
 post '/new' do
     item = [params[:name], params[:rarity]]
 
-    db.execute("INSERT INTO pool (name, rarity) VALUES (?,?)",item)
-    redirect '/'
+    flash[:pool_message] = "Could Not Create (name already exists)" if db.execute("SELECT * FROM pool WHERE name LIKE ?",item[0]).first != {}
+    db.execute("INSERT OR IGNORE INTO pool (name, rarity) VALUES (?,?)",item)
+    redirect '/pool'
 end
 
 get '/pool/:id/edit' do
+  id = params[:id].to_i
+  
+  @item = db.execute("SELECT * FROM pool WHERE id=?",id).first
 
+  slim :'pool/edit'
 end
 
 post '/pool/edit' do
+    item = [params[:name], params[:rarity], params[:id]]
 
+    db.execute("UPDATE pool SET name=?, rarity=? WHERE id=?",item)
+    redirect('/pool')
 end
 
-get '/pool/delete' do
+post '/pool/delete' do
     to_delete = params[:id].to_i
 
     db.execute "DELETE FROM pool WHERE id=?",to_delete

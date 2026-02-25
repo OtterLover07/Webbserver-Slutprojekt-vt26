@@ -2,7 +2,7 @@ require 'bcrypt'
 require 'sinatra/reloader'
 
 get('/register') do
-    slim(:register)
+    slim :'login/register'
 end
 
 post('/register') do
@@ -26,12 +26,17 @@ post('/register') do
     end
 end
 
+get '/login' do
+    @redirect_to = params[:redirect]
+    slim :'login/login'
+end
 
 post('/login') do
+    redirect_to = params[:redirect]
     pwd, username = params[:pwd], params[:username]
     if !user = db.execute('SELECT * FROM users WHERE username=?', username.downcase).first
         flash[:login_fail] = "Login unsucessful: user does not exist"
-        redirect('/')
+        redirect '/login'
     end
     # p user
 
@@ -40,8 +45,9 @@ post('/login') do
         session[:admin] = true if user['admin'] == 1
     else
         flash[:login_fail] = "Login unsucessful: Incorrect password"
+        redirect '/login'
     end
-    redirect('/')
+    redirect redirect_to
 end
 
 post('/logout') do
