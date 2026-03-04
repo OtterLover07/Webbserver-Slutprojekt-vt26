@@ -6,6 +6,7 @@ get('/register') do
 end
 
 post('/register') do
+    redirect_to = params[:redirect]
     username = params[:username]
     password, confirm_password = params[:password], params[:pwd_confirm]
     admin = ((params[:admin] == "true" ? "1" : "0"))
@@ -15,7 +16,13 @@ post('/register') do
         if password == confirm_password
             pwd_digest = BCrypt::Password.create(password)
             db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES (?, ?, ?)', [username.downcase, pwd_digest, admin])
-            redirect('/')
+            session[:user_id] = db.execute('SELECT user_id FROM users WHERE username=?', username.downcase).first
+            session[:admin] = true if admin == "1"
+            if redirect_to
+                redirect redirect_to
+            else
+                redirect '/'
+            end
         else
             session[:pwd_fail] = "Passwords must match."
             redirect('/register')
@@ -41,7 +48,7 @@ post('/login') do
     # p user
 
     if BCrypt::Password.new(user['pwd_digest']) == pwd
-        session[:uid] = user['user_id']
+        session[:user_id] = user['user_id']
         session[:admin] = true if user['admin'] == 1
     else
         flash[:login_fail] = "Login unsucessful: Incorrect password"

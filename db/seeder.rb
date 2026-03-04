@@ -15,8 +15,9 @@ def seed!(db)
 end
 
 def drop_tables(db)
-  db.execute('DROP TABLE IF EXISTS pool')
-  db.execute('DROP TABLE IF EXISTS users') 
+  # db.execute('DROP TABLE IF EXISTS pool')
+  # db.execute('DROP TABLE IF EXISTS users') 
+  db.execute('DROP TABLE IF EXISTS pulled_items') 
 end
 
 def create_tables(db)
@@ -32,10 +33,13 @@ def create_tables(db)
               admin BOOLEAN DEFAULT 0)')
   db.execute('CREATE TABLE IF NOT EXISTS pulled_items (
               item_id INTEGER, 
-              amount INTEGER,
               owner_id INTEGER,
+              amount INTEGER,
+              prefix TINYTEXT,
               FOREIGN KEY(item_id) REFERENCES pool(id),
-              FOREIGN KEY(owner_id) REFERENCES users(user_id))')
+              FOREIGN KEY(owner_id) REFERENCES users(user_id),
+              UNIQUE(item_id, owner_id)
+              )')
 end
 
 def populate_tables(db)

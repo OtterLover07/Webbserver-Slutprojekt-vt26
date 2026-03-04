@@ -1,13 +1,13 @@
 Things to do:
-    - Pull item(s) from lootboxes
-        - Pull from database of lootbox items
-        - Items should have different rarities
-    - Manage items in loot pool
-        - admin-only access
-        - CRUD functionality
-    - Store pulled items
-    - Store item inventory per-user
-        - Requires login functionality
+    X Pull item(s) from lootboxes
+        X Pull from database of lootbox items
+        X Items should have different rarities
+    X Manage items in loot pool
+        X admin-only access
+        X CRUD functionality
+    X Store pulled items
+    X Store item inventory per-user
+        X Requires login functionality
     - Let user manage personal inventory
 
 Extra:

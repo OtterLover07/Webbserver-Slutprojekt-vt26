@@ -7,14 +7,18 @@ html lang="en"
     title Lootbox Page
   body 
     h1 Lootbox Page
+    - if request.path_info != "/"
+      a href="/" return to homepage
     hr
     - if request.path_info != "/login" && request.path_info != "/register" 
-      - if session[:uid]
+      - if session[:user_id]
+        form action="/inventory" method="get" style="justify_self:end"
+          input type="submit" value="Inventory"
         form action="/logout" method="post"
           input type="submit" value="Log out"
-      - if session[:admin]
-          form action="/register" method="get"
-            input type="submit" value="Register new user"
+        - if session[:admin]
+            form action="/register" method="get"
+              input type="submit" value="Register new user"
       - else
         form action="/login" method="get"
           input type="hidden" name="redirect" value=request.path_info

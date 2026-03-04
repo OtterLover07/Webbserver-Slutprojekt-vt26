@@ -43,12 +43,12 @@ post '/pool/edit' do
     item = [params[:name], params[:rarity], params[:id]]
 
     db.execute("UPDATE pool SET name=?, rarity=? WHERE id=?",item)
-    redirect('/pool')
+    redirect '/pool'
 end
 
 post '/pool/delete' do
     to_delete = params[:id].to_i
 
     db.execute "DELETE FROM pool WHERE id=?",to_delete
-    redirect '/pools'
+    redirect '/pool'
 end

@@ -51,9 +51,9 @@ get '/pull' do
     end
    
     item = db.execute("SELECT * FROM pool WHERE rarity LIKE ? ORDER BY RANDOM() LIMIT 1", rarity).first
-    if user_id = session[:uid] 
-      db.execute "INSERT OR IGNORE INTO pulled_items VALUES (?, 0, ?)", [item["id"],user_id]
-      db.execute("UPDATE pulled_items SET amount = (amount + 1) WHERE (item_id,owner_id) LIKE (?,?)", [item["id"],user_id])
+    if user_id = session[:user_id] 
+      db.execute "INSERT OR IGNORE INTO pulled_items VALUES (?, ?, 0, null)", [item["id"],user_id]
+      db.execute "UPDATE pulled_items SET amount=(amount+1) WHERE item_id LIKE ? AND owner_id LIKE ?", [item["id"],user_id]
     end
     @loot << item
     # @loot << number.to_s

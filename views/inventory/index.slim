@@ -1,0 +1,38 @@
+- if message = flash[:inventory_message]
+    p #{message}
+- if @inventory.length == 0
+    h2 This user doesn't own any items yet
+- else
+    - if @user["admin"]
+        h1 style="color:crimson; display:inline" #{@user["username"]}
+    - else
+        h1 style="color:black; display:inline" #{@user["username"]}
+    h1 style="display:inline"'s inventory:
+
+    - @inventory.each do |item|
+        h2 
+            - case item["rarity"]
+                / - when "common"
+                /     p #{item["name"]} style="color:gray"
+                - when "uncommon"
+                    p style="color:forestgreen" #{item["name"]}
+                - when "rare"
+                    p style="color:blue" #{item["name"]}
+                - when "epic"
+                    p style="color:darkviolet" #{item["name"]}
+                - when "legendary"
+                    p style="color:goldenrod" #{item["name"]}
+                - when "mythical"
+                    p style="color:firebrick" #{item["name"]}
+                - else
+                    p #{item["name"]}
+
+        p rarity: #{item["rarity"]}
+        p amount: #{item["amount"]}
+        - if @user["user_id"].to_s == session[:user_id].to_s
+            form action="/inventory/#{@user["user_id"]}/delete/#{item["item_id"]}" method="post"
+                - if item["amount"].to_i == 1
+                    input type="submit" value="Remove (Warning: Last item!)" style="color:red"
+                - else
+                    input type="submit" value="Remove"
+        hr
