@@ -1,9 +1,28 @@
 p you got:
--@loot.each do |reward|
-    - if reward.is_a?(String)
+-@loot.each do |item|
+    - if item.is_a?(String)
         p #{reward}
     - else
-        p #{reward["name"]} (#{reward["rarity"]})
+        - if item["prefix"]
+            p style="color:hotpink; display:inline" #{item["prefix"] + " "}
+        - case item["rarity"]
+            / - when "common"
+            /     p #{item["name"]} style="color:gray"
+            - when "uncommon"
+                p style="color:forestgreen; display:inline" #{item["name"]} (#{item["rarity"]})
+            - when "rare"
+                p style="color:blue; display:inline" #{item["name"]} (#{item["rarity"]})
+            - when "epic"
+                p style="color:darkviolet; display:inline" #{item["name"]} (#{item["rarity"]})
+            - when "legendary"
+                p style="color:goldenrod; display:inline" #{item["name"]} (#{item["rarity"]})
+            - when "mythical"
+                p style="color:firebrick; display:inline" #{item["name"]} (#{item["rarity"]})
+            - else
+                p style="display:inline" #{item["name"]} (#{item["rarity"]})
+        br
+        br
+                
 
 a href="/pull" open another
 br

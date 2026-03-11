@@ -29,10 +29,13 @@ end
 
 post '/inventory/:uid/delete/:item_id' do
     user_id, to_delete = params[:uid], params[:item_id]
-    p params
+
+    if !((user_id.to_s == session[:user_id].to_s) || session[:admin])
+        redirect "/noaccess"
+    end
 
     db.execute "UPDATE pulled_items SET amount=(amount-1) WHERE item_id LIKE ? AND owner_id LIKE ?", [to_delete, user_id]
-    db.execute "DELETE FROM pulled_items WHERE item_id LIKE ? AND owner_id LIKE ? AND amount=0",[to_delete, user_id]
+    db.execute "DELETE FROM pulled_items WHERE item_id LIKE ? AND owner_id LIKE ? AND amount<=0",[to_delete, user_id]
 
     redirect "/inventory/#{user_id}"
 end

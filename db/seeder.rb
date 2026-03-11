@@ -35,10 +35,10 @@ def create_tables(db)
               item_id INTEGER, 
               owner_id INTEGER,
               amount INTEGER,
-              prefix TINYTEXT,
+              prefix TEXT,
               FOREIGN KEY(item_id) REFERENCES pool(id),
               FOREIGN KEY(owner_id) REFERENCES users(user_id),
-              UNIQUE(item_id, owner_id)
+              UNIQUE (item_id, owner_id, prefix)
               )')
 end
 

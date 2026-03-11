@@ -11,8 +11,21 @@ hr
     h2 Loot Pool:
 
     - @pool.each do |item|
+        - case item["rarity"]
+            - when "uncommon"
+                - color = "forestgreen"
+            - when "rare"
+                - color = "blue"
+            - when "epic"
+                - color = "darkviolet"
+            - when "legendary"
+                - color = "goldenrod"
+            - when "mythical"
+                - color = "firebrick"
+            - else
+                - color = "gray"
         h2 
-            a href="/pool/#{item["id"]}/edit" style="color:black" #{item["name"]}
+            a href="/pool/#{item["id"]}/edit" style="color:#{color}" #{item["name"]}
         p rarity: #{item["rarity"]}
         form action="/pool/delete" method="post"
             input type="hidden" value="#{item["id"]}" name="id"

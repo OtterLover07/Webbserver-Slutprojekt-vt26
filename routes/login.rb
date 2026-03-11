@@ -16,7 +16,7 @@ post('/register') do
         if password == confirm_password
             pwd_digest = BCrypt::Password.create(password)
             db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES (?, ?, ?)', [username.downcase, pwd_digest, admin])
-            session[:user_id] = db.execute('SELECT user_id FROM users WHERE username=?', username.downcase).first
+            session[:user_id] = db.execute('SELECT user_id FROM users WHERE username=?', username.downcase).first['user_id']
             session[:admin] = true if admin == "1"
             if redirect_to
                 redirect redirect_to

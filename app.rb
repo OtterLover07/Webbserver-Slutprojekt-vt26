@@ -51,18 +51,31 @@ get '/pull' do
     end
    
     item = db.execute("SELECT * FROM pool WHERE rarity LIKE ? ORDER BY RANDOM() LIMIT 1", rarity).first
-    if user_id = session[:user_id] 
-      db.execute "INSERT OR IGNORE INTO pulled_items VALUES (?, ?, 0, null)", [item["id"],user_id]
-      db.execute "UPDATE pulled_items SET amount=(amount+1) WHERE item_id LIKE ? AND owner_id LIKE ?", [item["id"],user_id]
+    prefix = gen_prefix
+    if user_id = session[:user_id]
+      if prefix
+        db.execute "INSERT OR IGNORE INTO pulled_items VALUES (?, ?, 0, ?)", [item["id"],user_id, prefix]
+        db.execute "UPDATE pulled_items SET amount=(amount+1) WHERE item_id LIKE ? AND owner_id LIKE ? AND prefix LIKE ?", [item["id"],user_id, prefix]
+      else
+        db.execute "INSERT OR IGNORE INTO pulled_items VALUES (?, ?, 0, 'null')", [item["id"],user_id]
+        db.execute "UPDATE pulled_items SET amount=(amount+1) WHERE item_id LIKE ? AND owner_id LIKE ? AND prefix LIKE 'null'", [item["id"],user_id]
+      end
     end
+    item["prefix"] = prefix
     @loot << item
     # @loot << number.to_s
   end
   slim :pull
 end
 
+def gen_prefix
+  prefixes = ["Hale's Own", "Extremely Rad", "Mom's Favourite", "Freshly Cut", "Weird", "Peckin' Awesome", "Prefixed", "Prototype", "Sanitized"]
+  if rand <= 0.03
+    return prefixes[rand(0..(prefixes.length - 1))]
+  else
+    return nil
+  end
+end
 
-Dir["C:/Users/melker.willforss/Documents/Webbserverprogrammering/Webbserver-Slutprojekt-vt26/routes/*.rb"].each {|file| require file }
-# require_relative 'errors.rb'
-# require_relative 'login.rb'
-# require_relative 'pool.rb'
+path = __dir__ + "/routes/*.rb"
+Dir[path].each {|file| require file }
