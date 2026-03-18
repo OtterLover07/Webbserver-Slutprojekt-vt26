@@ -1,5 +1,6 @@
 require 'sinatra/reloader'
 
+
 before '/pool*' do
     if !session[:admin]
         redirect '/noaccess'

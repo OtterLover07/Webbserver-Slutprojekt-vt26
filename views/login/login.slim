@@ -4,7 +4,8 @@ form action="/login" method="post"
     input type="hidden" name="redirect" value=@redirect_to
     br
     - if flash[:login_fail]
-        p style="color:red"   #{flash[:login_fail]}
+        p style="color:red" #{flash[:login_fail]}
+        p style="color:red" #{@attempts} 
         br
     input type="submit" value="Log in"
 

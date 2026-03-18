@@ -30,7 +30,10 @@ def create_tables(db)
               user_id INTEGER PRIMARY KEY AUTOINCREMENT,
               username TINYTEXT UNIQUE NOT NULL,
               pwd_digest TEXT NOT NULL,
-              admin BOOLEAN DEFAULT 0)')
+              admin BOOLEAN DEFAULT 0,
+              login_attempts INTEGER DEFAULT 0,
+              timeout_until INTEGER DEFAULT 0
+              )')
   db.execute('CREATE TABLE IF NOT EXISTS pulled_items (
               item_id INTEGER, 
               owner_id INTEGER,

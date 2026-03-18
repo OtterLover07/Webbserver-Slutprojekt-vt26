@@ -24,11 +24,11 @@ post('/register') do
                 redirect '/'
             end
         else
-            session[:pwd_fail] = "Passwords must match."
+            flash[:pwd_fail] = "Passwords must match."
             redirect('/register')
         end
     else
-        session[:username_fail] = "Username already taken"
+        flash[:username_fail] = "Username already taken"
         redirect('/register')
     end
 end
@@ -38,7 +38,7 @@ get '/login' do
     slim :'login/login'
 end
 
-post('/login') do
+post '/login' do
     redirect_to = params[:redirect]
     pwd, username = params[:pwd], params[:username]
     if !user = db.execute('SELECT * FROM users WHERE username=?', username.downcase).first
@@ -46,12 +46,25 @@ post('/login') do
         redirect '/login'
     end
     # p user
+    if login_timeout?(user)
+        flash[:login_fail] = "This account has had too many attempted logins. Please wait 5 minutes and try again."
+        redirect '/login'
+    end
+    log_start_attempts(user)
 
     if BCrypt::Password.new(user['pwd_digest']) == pwd
         session[:user_id] = user['user_id']
         session[:admin] = true if user['admin'] == 1
     else
         flash[:login_fail] = "Login unsucessful: Incorrect password"
+
+        db.execute("UPDATE users SET login_attempts = (users.login_attempts + 1) WHERE user_id=?", user["user_id"])
+        @attempts = db.execute("SELECT login_attempts FROM users WHERE user_id=?", user["user_id"]).first["login_attempts"]
+        if @attempts >= session[:start_attempts][user["user_id"]] + 10
+            timeout_until = Time.now.to_i + 300
+            db.execute("UPDATE users SET timeout_until=? WHERE user_id=?", [timeout_until, user["user_id"]])
+        end
+
         redirect '/login'
     end
     redirect redirect_to

@@ -1,5 +1,6 @@
 require 'sinatra/reloader'
 
+
 # before '/inventory*' do
 #     if !session[:user_id]
 #         redirect '/noaccount'
@@ -12,7 +13,7 @@ end
 
 get '/inventory/:uid' do
     user_id = params[:uid]
-    @user = db.execute('SELECT * FROM users WHERE user_id=?', user_id).first
+    @user = user(user_id)
     @inventory = db.execute("SELECT * FROM pulled_items 
         INNER JOIN pool ON pulled_items.item_id = pool.id
         WHERE owner_id LIKE ? ORDER BY
