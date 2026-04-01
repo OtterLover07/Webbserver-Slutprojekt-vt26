@@ -1,4 +1,3 @@
-require 'bcrypt'
 require 'sinatra/reloader'
 
 get('/register') do
@@ -6,18 +5,15 @@ get('/register') do
 end
 
 post('/register') do
-    redirect_to = params[:redirect]
-    username = params[:username]
+    redirect_to, username, admin = params[:redirect], params[:username], (params[:admin] == "true" ? true : false)
     password, confirm_password = params[:password], params[:pwd_confirm]
-    admin = ((params[:admin] == "true" ? "1" : "0"))
 
-    username_check = db.execute('SELECT user_id FROM users WHERE username=?', username.downcase)
+    username_check = get_user(username: username)
     if username_check.empty?
         if password == confirm_password
-            pwd_digest = BCrypt::Password.create(password)
-            db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES (?, ?, ?)', [username.downcase, pwd_digest, admin])
-            session[:user_id] = db.execute('SELECT user_id FROM users WHERE username=?', username.downcase).first['user_id']
-            session[:admin] = true if admin == "1"
+            register_user(username, password, admin)
+            session[:user_id] = get_user(username: username)['user_id']
+            session[:admin] = true if admin
             if redirect_to
                 redirect redirect_to
             else
@@ -40,30 +36,34 @@ end
 
 post '/login' do
     redirect_to = params[:redirect]
-    pwd, username = params[:pwd], params[:username]
-    if !user = db.execute('SELECT * FROM users WHERE username=?', username.downcase).first
+
+    password, username = params[:pwd], params[:username]
+    if !user = get_user(username: username)
         flash[:login_fail] = "Login unsucessful: user does not exist"
         redirect '/login'
     end
-    # p user
-    if login_timeout?(user)
+    uid = user['user_id']
+
+    if login_timeout?(user_id)
         flash[:login_fail] = "This account has had too many attempted logins. Please wait 5 minutes and try again."
         redirect '/login'
     end
-    log_start_attempts(user)
+    
+    session[:start_attempts] = {} if !session[:start_attempts]
 
-    if BCrypt::Password.new(user['pwd_digest']) == pwd
-        session[:user_id] = user['user_id']
+    if !session[:start_attempts][user_id]
+      session[:start_attempts][user_id] = login_attempts(user_id)
+    end
+
+    if password_correct?(password, user['pwd_digest'])
+        session[:user_id] = user_id
         session[:admin] = true if user['admin'] == 1
     else
         flash[:login_fail] = "Login unsucessful: Incorrect password"
 
-        db.execute("UPDATE users SET login_attempts = (users.login_attempts + 1) WHERE user_id=?", user["user_id"])
-        @attempts = db.execute("SELECT login_attempts FROM users WHERE user_id=?", user["user_id"]).first["login_attempts"]
-        if @attempts >= session[:start_attempts][user["user_id"]] + 10
-            timeout_until = Time.now.to_i + 300
-            db.execute("UPDATE users SET timeout_until=? WHERE user_id=?", [timeout_until, user["user_id"]])
-        end
+        @attempts = get_login_attempts(user_id)
+        increase_login_attempts(user_id)
+        impose_timeout(user_id) if @attempts > session[:start_attempts][user_id] + 10
 
         redirect '/login'
     end

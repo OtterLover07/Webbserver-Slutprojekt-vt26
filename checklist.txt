@@ -8,7 +8,7 @@ Things to do:
     X Store pulled items
     X Store item inventory per-user
         X Requires login functionality
-    - Let user manage personal inventory
+    X Let user manage personal inventory
 
 Extra:
     - Multiple lootbox collections with different possible pulls

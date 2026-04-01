@@ -1,5 +1,9 @@
 - if message = flash[:inventory_message]
     p #{message}
+- if session[:admin]
+    a href="/inventory/#{@browse.last}" style="display:block; justify_self:start" previous user
+    a href="/inventory/#{@browse.first}" style="display:block; justify_self:end" next user
+    br
 - if @inventory.length == 0
     h2 This user doesn't own any items yet
 - else
