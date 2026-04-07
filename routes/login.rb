@@ -9,7 +9,7 @@ post('/register') do
     password, confirm_password = params[:password], params[:pwd_confirm]
 
     username_check = get_user(username: username)
-    if username_check.empty?
+    if !username_check
         if password == confirm_password
             register_user(username, password, admin)
             session[:user_id] = get_user(username: username)['user_id']
@@ -42,7 +42,7 @@ post '/login' do
         flash[:login_fail] = "Login unsucessful: user does not exist"
         redirect '/login'
     end
-    uid = user['user_id']
+    user_id = user['user_id']
 
     if login_timeout?(user_id)
         flash[:login_fail] = "This account has had too many attempted logins. Please wait 5 minutes and try again."
@@ -52,7 +52,7 @@ post '/login' do
     session[:start_attempts] = {} if !session[:start_attempts]
 
     if !session[:start_attempts][user_id]
-      session[:start_attempts][user_id] = login_attempts(user_id)
+      session[:start_attempts][user_id] = get_login_attempts(user_id)
     end
 
     if password_correct?(password, user['pwd_digest'])

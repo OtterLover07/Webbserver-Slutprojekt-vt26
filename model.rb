@@ -66,7 +66,8 @@ end
 
 def register_user(username, password, admin)
   pwd_digest = BCrypt::Password.create(password)
-  db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES (?, ?, ?)', [username.downcase, pwd_digest, admin])
+  admin ? insert_admin = 1 : insert_admin = 0
+  db.execute('INSERT INTO users (username, pwd_digest, admin) VALUES (?, ?, ?)', [username.downcase, pwd_digest, insert_admin])
 end
 
 def password_correct?(password, pwd_digest)
