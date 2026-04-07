@@ -9,6 +9,8 @@ require_relative 'model'
 
 enable :sessions
 
+# liten kommentar så jag kan göra en sista push
+
 get '/' do
   slim(:main)
 end
